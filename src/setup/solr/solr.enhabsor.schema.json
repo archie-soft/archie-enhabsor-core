@@ -1,0 +1,142 @@
+{
+    "add-field": {
+        "name": "isadFonds",
+        "type": "string",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "isadSubFonds",
+        "type": "string",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "isadSeries",
+        "type": "string",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "isadFile",
+        "type": "string",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcTitle",
+        "type": "text_general",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcCreator",
+        "type": "text_general",
+        "indexed": true,
+        "stored": true,
+        "multiValued": true
+    },
+    "add-field": {
+        "name": "dcDate",
+        "type": "pdates",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcDescription",
+        "type": "text_general",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcType",
+        "type": "string",
+        "indexed": true,
+        "stored": true
+    },
+    "add-field": {
+        "name": "dcSource",
+        "type": "text_general",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcFormat",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcIdentifier",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+
+    "add-field": {
+        "name": "localStoragePermanent",
+        "type": "boolean",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "localStorageCabinet",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "localStorageShelf",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "localStorageContainer",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": false
+    },
+
+    "add-field": {
+        "name": "timestamp",
+        "type": "pdate",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false,
+        "default": "NOW"
+    },
+    "add-field": {
+        "name": "content",
+        "type": "text_general",
+        "indexed": false,
+        "stored": true,
+        "multiValued": true
+    },
+    "add-copy-field": {
+        "source": "dcTitle",
+        "dest": "_text_"
+    },
+    "add-copy-field": {
+        "source": "dcDescription",
+        "dest": "_text_"
+    },
+    "add-copy-field": {
+        "source": "content",
+        "dest": "_text_"
+    }
+}
