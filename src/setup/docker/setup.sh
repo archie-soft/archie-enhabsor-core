@@ -53,7 +53,3 @@ a2enmod proxy
 a2enmod proxy_http
 a2dissite 000-default
 a2ensite archie.virtual-host
-
-# Move start script to the root of the file system and make sure it is executable
-mv ./start.sh /
-chmod 755 /start.sh
