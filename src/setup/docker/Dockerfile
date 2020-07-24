@@ -1,5 +1,6 @@
 FROM debian:buster
+WORKDIR /root/
 ADD . /root
-RUN /root/setup.sh
-CMD ["/root/start.sh"]
-#EXPOSE 80 3306
+RUN ./setup.sh
+CMD ["/start.sh"]
+EXPOSE 80 3306 8983 8161
