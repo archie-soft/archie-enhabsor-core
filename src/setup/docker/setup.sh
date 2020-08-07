@@ -30,7 +30,7 @@ runuser -u www-data -- /opt/apache/solr/bin/solr create -c enhabsor
 curl http://localhost:8983/solr/enhabsor/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
 curl http://localhost:8983/solr/enhabsor/config -H 'Content-type:application/json' -d @./archie.solr.config.json
 curl http://localhost:8983/solr/enhabsor/schema -H 'Content-type:application/json' -d @./archie.solr.schema.json
-# optionally: restore data freom backup snapshot
+# optionally: restore data from backup snapshot
 
 # AcitiveMQ configuration
 tar xf ./download/activemq-5.16.0-bin.tar.gz

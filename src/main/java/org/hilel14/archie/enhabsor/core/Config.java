@@ -40,7 +40,7 @@ public class Config {
     private final String jmsQueueName;
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
-    private final SolrClient solrClient;
+    private SolrClient solrClient;
     private final Set<String> repositories = new HashSet<>();
     private Key key;
 
@@ -219,6 +219,13 @@ public class Config {
      */
     public Key getKey() {
         return key;
+    }
+
+    /**
+     * @param solrClient the solrClient to set
+     */
+    public void setSolrClient(SolrClient solrClient) {
+        this.solrClient = solrClient;
     }
 
 }

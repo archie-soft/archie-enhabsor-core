@@ -42,7 +42,14 @@
         "multiValued": true
     },
     "add-field": {
-        "name": "dcDate",
+        "name": "dcDateStart",
+        "type": "pdates",
+        "indexed": true,
+        "stored": true,
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "dcDateEnd",
         "type": "pdates",
         "indexed": true,
         "stored": true,
@@ -82,7 +89,6 @@
         "stored": true,
         "multiValued": false
     },
-
     "add-field": {
         "name": "localStoragePermanent",
         "type": "boolean",
@@ -111,7 +117,12 @@
         "stored": true,
         "multiValued": false
     },
-
+    "add-field": {
+        "name": "localTextActionCode",
+        "type": "string",
+        "indexed": true,
+        "stored": true
+    },
     "add-field": {
         "name": "timestamp",
         "type": "pdate",
