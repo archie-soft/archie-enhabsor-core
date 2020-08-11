@@ -1,7 +1,5 @@
 package org.hilel14.archie.enhabsor.core.jobs.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.io.FilenameUtils;
 
@@ -31,60 +29,21 @@ public class ImportFileTicket {
     }
 
     public void finalizeStatus() {
-        if (importStatusCode == IMPORT_IN_PROGRESS) {
-            importStatusCode = IMPORT_COMPLETED_SUCCESSFULLY;
+        if (getImportStatusCode() == IMPORT_IN_PROGRESS) {
+            setImportStatusCode(IMPORT_COMPLETED_SUCCESSFULLY);
         }
     }
 
     public String getBaseName() {
-        return FilenameUtils.getBaseName(fileName);
+        return FilenameUtils.getBaseName(getFileName());
     }
 
     public String getFormat() {
-        return FilenameUtils.getExtension(fileName).toLowerCase();
+        return FilenameUtils.getExtension(getFileName()).toLowerCase();
     }
 
     public String getAssetName() {
-        return uuid + "." + getFormat();
-    }
-
-    public Map<String, Object> toDocument() {
-        Map<String, Object> doc = new HashMap<>();
-        // values from folder
-        doc.put("dcTitle", importFolderForm.getDcTitle());
-        doc.put("dcDate", importFolderForm.getDcDate());
-        doc.put("dcCreator", importFolderForm.getDcCreators());
-        doc.put("dcDescription", importFolderForm.getDcDescription());
-        doc.put("dcSubject", importFolderForm.getDcSubjects());
-        doc.put("dcType", importFolderForm.getDcType());
-        doc.put("dcIsPartOf", importFolderForm.getDcIsPartOf());
-        doc.put("storageLocation", importFolderForm.getStorageLocation());
-        doc.put("dcAccessRights", importFolderForm.getDcAccessRights());
-        // values from file
-        doc.put("content", content);
-        doc.put("fileDigest", fileDigest);
-        doc.put("dcFormat", getFormat());
-        // dynamic values based on file name
-        if (importFolderForm.getAddFileNamesTo() != null) {
-            switch (importFolderForm.getAddFileNamesTo()) {
-                case "dcTitle":
-                    String dcTitle = doc.get("dcTitle") == null
-                            ? getBaseName()
-                            : doc.get("dcTitle").toString().trim() + " " + getBaseName();
-                    doc.put("dcTitle", dcTitle);
-                    break;
-                case "dcDescription":
-                    String dcDescription = doc.get("dcDescription") == null
-                            ? getBaseName()
-                            : doc.get("dcDescription").toString().trim() + " " + getBaseName();
-                    doc.put("dcDescription", dcDescription);
-                    break;
-                case "sortCode":
-                    doc.put("sortCode", Long.valueOf(getBaseName()));
-                    break;
-            }
-        }
-        return doc;
+        return getUuid() + "." + getFormat();
     }
 
     /**

@@ -27,7 +27,7 @@ public class FileValidator implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket, Path path) {
+    public void process(ImportFileTicket ticket, Path path) {
         LOGGER.debug("Validating file {}", ticket.getFileName());
         if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             ticket.setImportStatusCode(ImportFileTicket.INVALID_FILE);

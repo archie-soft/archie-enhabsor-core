@@ -84,7 +84,7 @@ public class ImportFolderJob {
     public void importFile(ImportFileTicket ticket, Path path) throws Exception {
         for (TaskProcessor processor : processors) {
             if (ticket.getImportStatusCode() == ImportFileTicket.IMPORT_IN_PROGRESS) {
-                processor.proccess(ticket, path);
+                processor.process(ticket, path);
             }
         }
         ticket.finalizeStatus();

@@ -24,7 +24,7 @@ public class DuplicateFinder implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
+    public void process(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Checking if file {} already exist", ticket.getFileName());
         SolrQuery query = new SolrQuery();
         query.set("q", "fileDigest:" + ticket.getFileDigest());

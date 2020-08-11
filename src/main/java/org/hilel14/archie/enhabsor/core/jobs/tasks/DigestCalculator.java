@@ -24,7 +24,7 @@ public class DigestCalculator implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
+    public void process(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Calculating digest for file {}", ticket.getFileName());
         byte[] data = Files.readAllBytes(path);
         ticket.setFileDigest(DigestUtils.md5Hex(data));

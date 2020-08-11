@@ -28,7 +28,7 @@ public class ContentExtractor implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket, Path path) throws Exception {
+    public void process(ImportFileTicket ticket, Path path) throws Exception {
         switch (ticket.getImportFolderForm().getTextAction()) {
             case "recognize":
                 ocrTool.recognizeTextWithOcr(ticket, path);

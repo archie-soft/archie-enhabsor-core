@@ -18,7 +18,6 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.hilel14.archie.enhabsor.core.Config;
-import org.hilel14.archie.enhabsor.core.jobs.model.ArchieDocument;
 
 /**
  *
@@ -51,17 +50,17 @@ public class DeleteDocumentsJob {
 
     public void run(List<String> ids) throws Exception {
         LOGGER.debug("Deleting documents {}", ids);
-        List<ArchieDocument> files = deleteDocuments(ids);
+        List<FileAttributes> files = deleteDocuments(ids);
         LOGGER.debug("Deleting {} files", files.size());
-        for (ArchieDocument doc : files) {
-            deleteFiles(doc);
+        for (FileAttributes attributes : files) {
+            deleteFiles(attributes);
         }
         LOGGER.debug("Delete job completed successfully");
     }
 
-    private List<ArchieDocument> deleteDocuments(List<String> ids) throws IOException, SolrServerException {
+    private List<FileAttributes> deleteDocuments(List<String> ids) throws IOException, SolrServerException {
         String q = buildQuery(ids);
-        List<ArchieDocument> files = new ArrayList<>();
+        List<FileAttributes> files = new ArrayList<>();
         SolrQuery query = new SolrQuery();
         query.set("q", q);
         query.setFields("id", "dcFormat", "dcAccessRights");
@@ -74,11 +73,11 @@ public class DeleteDocumentsJob {
             Object format = list.get(i).getFieldValue("dcFormat");
             Object dcAccessRights = list.get(i).getFieldValue("dcAccessRights");
             if (format != null) {
-                ArchieDocument archdoc = new ArchieDocument();
-                archdoc.setId(id);
-                archdoc.setDcFormat(format.toString());
-                archdoc.setDcAccessRights(dcAccessRights.toString());
-                files.add(archdoc);
+                FileAttributes attributes = new FileAttributes();
+                attributes.id = id;
+                attributes.dcFormat = format.toString();
+                attributes.dcAccessRights = dcAccessRights.toString();
+                files.add(attributes);
             }
             UpdateResponse updateResponse = config.getSolrClient().deleteById(id);
             LOGGER.debug("Delete UpdateResponse: {}", updateResponse.toString());
@@ -97,10 +96,18 @@ public class DeleteDocumentsJob {
         return b.toString();
     }
 
-    private void deleteFiles(ArchieDocument doc) throws Exception {
-        config.getStorageConnector().delete(doc.getDcAccessRights(), "originals", doc.originalFileName());
-        config.getStorageConnector().delete(doc.getDcAccessRights(), "thumbnails", doc.thumbnailFileName());
-        config.getStorageConnector().delete(doc.getDcAccessRights(), "text", doc.textFileName());
+    private void deleteFiles(FileAttributes attributes) throws Exception {
+        config.getStorageConnector().delete(attributes.dcAccessRights, "originals", attributes.id.concat(".").concat(attributes.dcFormat));
+        config.getStorageConnector().delete(attributes.dcAccessRights, "thumbnails", attributes.id.concat(".png"));
+        config.getStorageConnector().delete(attributes.dcAccessRights, "text", attributes.id.concat(".txt"));
+    }
+
+    class FileAttributes {
+
+        String id;
+        String dcFormat;
+        String dcAccessRights;
+
     }
 
 }

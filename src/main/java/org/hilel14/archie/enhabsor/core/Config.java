@@ -28,42 +28,50 @@ import org.hilel14.archie.enhabsor.core.storage.StorageConnector;
 public class Config {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-    private final String archieEnv;
+    private String archieEnv;
     private StorageConnector storageConnector;
     private Path workFolder;
-    private final List<String> validFileFormats;
-    private final List<String> validOcrFormats;
-    private final String convertCommand;
-    private final String tesseractCommand;
-    private final String convertImageCommand;
-    private final String convertPdfCommand;
-    private final String jmsQueueName;
+    private List<String> validFileFormats;
+    private List<String> validOcrFormats;
+    private String convertCommand;
+    private String tesseractCommand;
+    private String convertImageCommand;
+    private String convertPdfCommand;
+    private String jmsQueueName;
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
     private SolrClient solrClient;
     private final Set<String> repositories = new HashSet<>();
     private Key key;
 
+    public Config(Properties properties) throws Exception {
+        initConfig(properties);
+    }
+
     public Config() throws Exception {
-        Properties p = loadProperties();
+        Properties properties = loadProperties();
+        initConfig(properties);
+    }
+
+    private void initConfig(Properties properties) throws Exception {
         // general properties
-        archieEnv = p.getProperty("archie.environment");
+        archieEnv = properties.getProperty("archie.environment");
         LOGGER.info("archieEnv = {}", archieEnv);
-        validFileFormats = Arrays.asList(p.getProperty("valid.file.formats").split(","));
+        validFileFormats = Arrays.asList(properties.getProperty("valid.file.formats").split(","));
         // jobs and tasks properties
-        convertCommand = p.getProperty("imagemagic.convert");
-        tesseractCommand = p.getProperty("tesseract");
-        validOcrFormats = Arrays.asList(p.getProperty("valid.ocr.formats").split(","));
-        convertImageCommand = p.getProperty("convert.image.preview");
-        convertPdfCommand = p.getProperty("convert.pdf.preview");
+        convertCommand = properties.getProperty("imagemagic.convert");
+        tesseractCommand = properties.getProperty("tesseract");
+        validOcrFormats = Arrays.asList(properties.getProperty("valid.ocr.formats").split(","));
+        convertImageCommand = properties.getProperty("convert.image.preview");
+        convertPdfCommand = properties.getProperty("convert.pdf.preview");
         // jms properties
-        jmsQueueName = p.getProperty("archie.jms.queue");
-        createJdbcDataSource(p);
-        createJmsConnectionFactory(p);
-        solrClient = new HttpSolrClient.Builder(p.getProperty("solr.base")).build();
+        jmsQueueName = properties.getProperty("archie.jms.queue");
+        createJdbcDataSource(properties);
+        createJmsConnectionFactory(properties);
+        solrClient = new HttpSolrClient.Builder(properties.getProperty("solr.base")).build();
         //jmsBrokerUrl = p.getProperty("archie.jms.broker");
         //jmsQueueName = p.getProperty("archie.jms.queue");
-        createStorageConnector(p);
+        createStorageConnector(properties);
         repositories.add("public");
         repositories.add("private");
         repositories.add("secret");

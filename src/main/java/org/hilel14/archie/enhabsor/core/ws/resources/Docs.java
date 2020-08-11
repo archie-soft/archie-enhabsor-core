@@ -23,7 +23,7 @@ import org.hilel14.archie.enhabsor.core.Config;
 
 import org.hilel14.archie.enhabsor.core.jobs.DeleteDocumentsJob;
 import org.hilel14.archie.enhabsor.core.jobs.UpdateDocumentsJob;
-import org.hilel14.archie.enhabsor.core.jobs.model.ArchieDocument;
+import org.hilel14.archie.enhabsor.core.jobs.model.ArchieItem;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
 
 /**
@@ -57,23 +57,22 @@ public class Docs {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     @Path("folder")
-    //public int importFolder(ImportAttributes importAttributes) throws Exception {
-    public int importFolder(ImportFolderForm importAttributes) throws Exception {
-        LOGGER.debug("Importing files from {}", importAttributes.getFolderName());
-        jmsProducer.produceJsonMessage(importAttributes, "import-folder");
+    public int importFolder(ImportFolderForm form) throws Exception {
+        LOGGER.debug("Importing files from {}", form.getFolderName());
+        jmsProducer.produceJsonMessage(form, "import-folder");
         return 0;
     }
 
     @PUT
     @RolesAllowed("manager")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateDocs(List<ArchieDocument> docs) throws Exception {
-        LOGGER.debug("Updating {} documents", docs.size());
-        if (docs.size() == 1) {
+    public void updateDocs(List<ArchieItem> items) throws Exception {
+        LOGGER.debug("Updating {} documents", items.size());
+        if (items.size() == 1) {
             UpdateDocumentsJob job = new UpdateDocumentsJob(config);
-            job.run(docs);
+            job.run(items);
         } else {
-            jmsProducer.produceJsonMessage(docs, "update-documents");
+            jmsProducer.produceJsonMessage(items, "update-documents");
         }
     }
 

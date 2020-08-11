@@ -28,6 +28,11 @@
         "multiValued": false
     },
     "add-field": {
+        "name": "dcAccessRights",
+        "type": "string",
+        "multiValued": false
+    },    
+    "add-field": {
         "name": "dcTitle",
         "type": "text_general",
         "indexed": true,

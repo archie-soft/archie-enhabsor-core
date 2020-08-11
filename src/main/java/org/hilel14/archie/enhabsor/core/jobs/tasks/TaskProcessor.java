@@ -9,5 +9,5 @@ import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
  */
 public interface TaskProcessor {
 
-    public void proccess(ImportFileTicket ticket, Path path) throws Exception;
+    public void process(ImportFileTicket ticket, Path path) throws Exception;
 }

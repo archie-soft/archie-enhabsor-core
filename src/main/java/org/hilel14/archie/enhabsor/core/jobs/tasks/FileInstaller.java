@@ -25,8 +25,8 @@ public class FileInstaller implements TaskProcessor {
     }
 
     @Override
-    public void proccess(ImportFileTicket ticket, Path original) throws Exception {
-        String repository = ticket.getImportFolderForm().getDcAccessRights();
+    public void process(ImportFileTicket ticket, Path original) throws Exception {
+        String repository = ticket.getImportFolderForm().getItemAttributes().get("dcAccessRights").toString();
         // original
         config.getStorageConnector().upload(original, repository, "originals");
         // thumbnail
