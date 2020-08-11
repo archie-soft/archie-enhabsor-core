@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 import org.hilel14.archie.enhabsor.core.Config;
-import static org.hilel14.archie.enhabsor.core.Config.LOGGER;
 
 /**
  *
@@ -17,16 +16,7 @@ public class TestimSetup {
     public static Config initTestEvn() throws Exception {
         Path base = Files.createTempDirectory("archie_");
         createSubFolders(base);
-        Properties properties = new Properties();
-        String name = "/archie.enhabsor.properties";
-        try (InputStream in = Config.class.getResourceAsStream(name);) {
-            properties.load(in);
-        }
-        properties.put("import.folder", base.resolve("import").toString());
-        properties.put("work.folder", base.resolve("work").toString());
-        properties.put("public.assets", base.resolve("assetstore").resolve("public").toString());
-        properties.put("private.assets", base.resolve("assetstore").resolve("private").toString());
-        properties.put("secret.assets", base.resolve("assetstore").resolve("secret").toString());
+        Properties properties = createProperties(base);
         Config config = new Config(properties);
         return config;
     }
@@ -41,5 +31,19 @@ public class TestimSetup {
                 Files.createDirectories(base.resolve("assetstore").resolve(store).resolve(section));
             }
         }
+    }
+
+    static Properties createProperties(Path base) throws IOException {
+        Properties properties = new Properties();
+        String name = "/archie.enhabsor.properties";
+        try (InputStream in = Config.class.getResourceAsStream(name);) {
+            properties.load(in);
+        }
+        properties.put("import.folder", base.resolve("import").toString());
+        properties.put("work.folder", base.resolve("work").toString());
+        properties.put("public.assets", base.resolve("assetstore").resolve("public").toString());
+        properties.put("private.assets", base.resolve("assetstore").resolve("private").toString());
+        properties.put("secret.assets", base.resolve("assetstore").resolve("secret").toString());
+        return properties;
     }
 }

@@ -3,7 +3,12 @@ package org.hilel14.archie.enhabsor.core.jobs.tasks;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import java.awt.image.BufferedImage;
 import java.nio.file.Path;
+import javax.imageio.ImageIO;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
 import org.slf4j.Logger;
@@ -42,8 +47,14 @@ public class ThumbnailGenerator implements TaskProcessor {
         }
     }
 
-    private Path convertPdf(ImportFileTicket ticket, Path original) throws Exception {
-        return original;
+    private void convertPdf(ImportFileTicket ticket, Path original) throws Exception {
+        Path target = original.getParent().resolve(ticket.getUuid() + ".png");
+        try (PDDocument document = PDDocument.load(original.toFile())) {
+            PDFRenderer renderer = new PDFRenderer(document);
+            BufferedImage image = renderer.renderImageWithDPI(0, 72, ImageType.RGB);
+            ImageIO.write(image, "png", target.toFile());
+
+        }
     }
 
     private void convertImage(ImportFileTicket ticket, Path original) throws Exception {
