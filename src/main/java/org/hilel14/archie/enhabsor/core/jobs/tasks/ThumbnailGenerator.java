@@ -53,7 +53,7 @@ public class ThumbnailGenerator implements TaskProcessor {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage image = renderer.renderImageWithDPI(0, 72, ImageType.RGB);
             ImageIO.write(image, "png", target.toFile());
-
+            //ImageIOUtil.writeImage(image, filename, 0, 0);
         }
     }
 

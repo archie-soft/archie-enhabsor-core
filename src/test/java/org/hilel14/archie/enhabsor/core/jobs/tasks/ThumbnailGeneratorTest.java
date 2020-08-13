@@ -1,11 +1,7 @@
 package org.hilel14.archie.enhabsor.core.jobs.tasks;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.TestimSetup;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
@@ -54,41 +50,24 @@ public class ThumbnailGeneratorTest {
     @Test
     public void testProccess() throws Exception {
         LOGGER.info("Testing process method of class ThumbnailGenerator");
-        // prepare test
+        // prepare test env
         Config config = TestimSetup.initTestEvn();
         ThumbnailGenerator instance = new ThumbnailGenerator(config);
-        // Create ImportFolderForm
-        String attributes;
-        try (InputStream in = ThumbnailGeneratorTest.class.getResourceAsStream("/data/folder-1.json");) {
-            attributes = new String(in.readAllBytes(), Charset.forName("utf-8"));
-        }
-        ImportFolderForm form = ImportFolderForm.unmarshal(attributes);
-        // init work folder
-        Path workFolder = config.getWorkFolder().resolve(form.getFolderName());
-        Files.createDirectory(workFolder);
-        copyToWorkFolder(workFolder, "dog.jpg");
-        copyToWorkFolder(workFolder, "git.pdf");
+        ImportFolderForm form = TestimSetup.getImportFolderForm();
         // jpg test
         String fileName = "dog.jpg";
         ImportFileTicket ticket = new ImportFileTicket(fileName, form);
-        Path original = workFolder.resolve(fileName);
+        Path original = config.getWorkFolder().resolve(fileName);
         instance.process(ticket, original);
         Path target = original.getParent().resolve(ticket.getUuid() + ".png");
         assertTrue(Files.exists(target));
         // pdf test
-        fileName = "git.pdf";
+        fileName = "git-cheat-sheet.pdf";
         ticket = new ImportFileTicket(fileName, form);
-        original = workFolder.resolve(fileName);
+        original = config.getWorkFolder().resolve(fileName);
         instance.process(ticket, original);
         target = original.getParent().resolve(ticket.getUuid() + ".png");
         assertTrue(Files.exists(target));
-    }
-
-    private void copyToWorkFolder(Path importFolder, String fileName) throws IOException {
-        try (InputStream in = ThumbnailGeneratorTest.class.getResourceAsStream("/data/folder-1/" + fileName);) {
-            Path target = importFolder.resolve(fileName);
-            Files.write(target, in.readAllBytes(), StandardOpenOption.CREATE);
-        }
     }
 
 }
