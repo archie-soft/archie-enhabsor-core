@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
+import net.lingala.zip4j.ZipFile;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.hilel14.archie.enhabsor.core.Config;
@@ -39,7 +39,7 @@ public class TestimSetup {
         initWorkFolder(base);
         Properties properties = createProperties(base);
         Config config = new Config(properties);
-        SolrClient solrClient = createSolrClient(base.resolve("solr"), "enhabsor");
+        SolrClient solrClient = createSolrClient(base);
         config.setSolrClient(solrClient);
         return config;
     }
@@ -81,19 +81,24 @@ public class TestimSetup {
     }
 
     private static void copyToWorkFolder(Path importFolder, String fileName) throws IOException {
-        try (InputStream in = ThumbnailGeneratorTest.class.getResourceAsStream("/data/folder-1/" + fileName);) {
+        try (InputStream in = TestimSetup.class.getResourceAsStream("/data/folder-1/" + fileName);) {
             Path target = importFolder.resolve(fileName);
             Files.write(target, in.readAllBytes(), StandardOpenOption.CREATE);
         }
     }
 
-    static SolrClient createSolrClient(Path home, String core) throws IOException {
-        // copy resources to solr-home folder
-        Files.createDirectory(home);
-        //String solrHome = "src/test/resources/solr";
+    static SolrClient createSolrClient(Path base) throws IOException {
+        //Files.createDirectory(home);
+        // copy zip file to temp folder
+        Path targetFile = base.resolve("solr.zip");
+        try (InputStream in = TestimSetup.class.getResourceAsStream("/solr.zip");) {
+            Files.write(targetFile, in.readAllBytes(), StandardOpenOption.CREATE);
+        }
+        // extract zip
+        ZipFile zipFile = new ZipFile(targetFile.toString());
+        zipFile.extractAll(base.toString());
         // create the client
-        SolrClient client = new EmbeddedSolrServer(home, core);
-        LOGGER.info("Solr home: {}, core name: {}", home, core);
+        SolrClient client = new EmbeddedSolrServer(base.resolve("solr"), "enhabosr");
         return client;
     }
 

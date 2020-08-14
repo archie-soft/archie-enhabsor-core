@@ -57,7 +57,6 @@ public class ContentExtractorTest {
         Path original = config.getWorkFolder().resolve(fileName);
         instance.process(ticket, original);
         assertFalse(ticket.getContent().isEmpty());
-        System.out.println(ticket.getContent());
         // pdf test
         fileName = "git-cheat-sheet.pdf";
         ticket = new ImportFileTicket(fileName, form);
