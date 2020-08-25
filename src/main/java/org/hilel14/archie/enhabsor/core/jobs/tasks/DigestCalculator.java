@@ -1,12 +1,12 @@
 package org.hilel14.archie.enhabsor.core.jobs.tasks;
 
-import java.nio.file.Files;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,10 @@ public class DigestCalculator implements TaskProcessor {
     @Override
     public void process(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Calculating digest for file {}", ticket.getFileName());
-        byte[] data = Files.readAllBytes(path);
-        ticket.setFileDigest(DigestUtils.md5Hex(data));
+        try (InputStream in = new FileInputStream(path.toFile())) {
+            String digest = DigestUtils.md5Hex(in);
+            ticket.setFileDigest(digest);
+        }
     }
 
 }
