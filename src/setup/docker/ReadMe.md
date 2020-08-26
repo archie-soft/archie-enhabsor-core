@@ -21,17 +21,28 @@ sudo docker exec -it archie.enhabsor.2 /bin/bash
 
 ## Test
 
-Docker published ports
-* http://localhost
-* http://localhost:8983/solr
-* http://localhost:8161/admin/ (user: admin, password: admin)
-
 Proxy
 * http://localhost/api
 * http://localhost/docs
+
+Docker published ports
+* http://localhost:8983/solr
+* http://localhost:8161/admin/ (user: admin, password: admin)
 
 Direct access (replace 172.17.0.2 with real container ip)
 * http://172.17.0.2
 * http://172.17.0.2:8983/solr
 * http://172.17.0.2:8161/admin/
 * mysql -h 172.17.0.2 -u archie -p enhabsor
+
+## Deploy Angular
+ng build --prod --base-href / --i18n-file src/locale/messages.he.xlf --i18n-format xlf --i18n-locale he
+sudo docker exec archie.enhabsor.2 rm -rf /var/www/archie/enhabsor
+sudo docker cp dist/archie-enhabsor-ui archie.enhabsor.2:/var/www/archie/enhabsor
+sudo docker exec archie.enhabsor.2 chown -R 0.0 /var/www/archie/
+
+## Deploy
+mvn clean install
+sudo docker cp target/archie-enhabsor-core-*.jar archie.enhabsor.2:/opt/hilel14/archie/enhabsor/lib
+optional: copy dependencies to lib folder
+optional: copy grizzly launch script bin folder

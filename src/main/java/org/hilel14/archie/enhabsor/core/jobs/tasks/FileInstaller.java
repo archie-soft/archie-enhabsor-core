@@ -2,12 +2,9 @@ package org.hilel14.archie.enhabsor.core.jobs.tasks;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
 
@@ -30,8 +27,8 @@ public class FileInstaller implements TaskProcessor {
         // original
         config.getStorageConnector().upload(original, repository, "originals");
         // thumbnail
-        Path thumbnail = generateThumbnail(ticket, original);
-        if (thumbnail != null) {
+        Path thumbnail = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".png");
+        if (Files.exists(thumbnail)) {
             config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
         }
         // text
@@ -45,49 +42,6 @@ public class FileInstaller implements TaskProcessor {
                 ticket.getImportFolderForm().getFolderName(),
                 ticket.getFileName()
         );
-    }
-
-    private Path generateThumbnail(ImportFileTicket ticket, Path original) throws Exception {
-        LOGGER.debug("Generating preview for file {}", ticket.getFileName());
-        switch (ticket.getFormat()) {
-            case "pdf":
-                return convertPdf(ticket, original);
-            case "jpg":
-            case "jpeg":
-            case "gif":
-            case "tif":
-            case "tiff":
-            case "png":
-                return convertImage(ticket, original);
-            default:
-                LOGGER.debug("Unable to create preview for {} files", ticket.getFormat());
-                return null;
-        }
-    }
-
-    private Path convertPdf(ImportFileTicket ticket, Path original) throws Exception {
-        String source = original.toString() + "[0]";
-        String target = original.getParent().resolve(ticket.getUuid() + ".png").toString();
-        LOGGER.debug("Executing command {} {} {}",
-                config.getConvertPdfCommand(), source, target);
-        CommandLine commandLine
-                = CommandLine.parse(config.getConvertPdfCommand() + " " + source + " " + target);
-        DefaultExecutor executor = new DefaultExecutor();
-        executor.setExitValue(0);
-        executor.execute(commandLine);
-        return Paths.get(target);
-    }
-
-    private Path convertImage(ImportFileTicket ticket, Path original) throws Exception {
-        String target = original.getParent().resolve(ticket.getUuid() + ".png").toString();
-        LOGGER.debug("Executing command {} {} {}",
-                config.getConvertImageCommand(), original, target);
-        CommandLine commandLine
-                = CommandLine.parse(config.getConvertImageCommand() + " " + original.toString() + " " + target);
-        DefaultExecutor executor = new DefaultExecutor();
-        executor.setExitValue(0);
-        executor.execute(commandLine);
-        return Paths.get(target);
     }
 
 }

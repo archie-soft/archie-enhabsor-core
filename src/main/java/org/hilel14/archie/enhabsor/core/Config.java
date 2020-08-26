@@ -33,11 +33,8 @@ public class Config {
     private Path workFolder;
     private List<String> validFileFormats;
     private List<String> validOcrFormats;
-    private String convertCommand;
-    private String tesseractCommand;
-    private String convertImageCommand;
-    private String convertPdfCommand;
     private String jmsQueueName;
+    private String grizzlyBaseUri;
     private BasicDataSource dataSource;
     private ActiveMQConnectionFactory jmsFactory;
     private SolrClient solrClient;
@@ -58,19 +55,12 @@ public class Config {
         archieEnv = properties.getProperty("archie.environment");
         LOGGER.info("archieEnv = {}", archieEnv);
         validFileFormats = Arrays.asList(properties.getProperty("valid.file.formats").split(","));
-        // jobs and tasks properties
-        convertCommand = properties.getProperty("imagemagic.convert");
-        tesseractCommand = properties.getProperty("tesseract");
         validOcrFormats = Arrays.asList(properties.getProperty("valid.ocr.formats").split(","));
-        convertImageCommand = properties.getProperty("convert.image.preview");
-        convertPdfCommand = properties.getProperty("convert.pdf.preview");
-        // jms properties
         jmsQueueName = properties.getProperty("archie.jms.queue");
+        setGrizzlyBaseUri(properties.getProperty("grizzly.base.uri"));
         createJdbcDataSource(properties);
         createJmsConnectionFactory(properties);
         solrClient = new HttpSolrClient.Builder(properties.getProperty("solr.base")).build();
-        //jmsBrokerUrl = p.getProperty("archie.jms.broker");
-        //jmsQueueName = p.getProperty("archie.jms.queue");
         createStorageConnector(properties);
         repositories.add("public");
         repositories.add("private");
@@ -136,34 +126,6 @@ public class Config {
      */
     public List<String> getValidOcrFormats() {
         return validOcrFormats;
-    }
-
-    /**
-     * @return the convertCommand
-     */
-    public String getConvertCommand() {
-        return convertCommand;
-    }
-
-    /**
-     * @return the tesseractCommand
-     */
-    public String getTesseractCommand() {
-        return tesseractCommand;
-    }
-
-    /**
-     * @return the convertImageCommand
-     */
-    public String getConvertImageCommand() {
-        return convertImageCommand;
-    }
-
-    /**
-     * @return the convertPdfCommand
-     */
-    public String getConvertPdfCommand() {
-        return convertPdfCommand;
     }
 
     /**
@@ -234,6 +196,20 @@ public class Config {
      */
     public void setSolrClient(SolrClient solrClient) {
         this.solrClient = solrClient;
+    }
+
+    /**
+     * @return the grizzlyBaseUri
+     */
+    public String getGrizzlyBaseUri() {
+        return grizzlyBaseUri;
+    }
+
+    /**
+     * @param grizzlyBaseUri the grizzlyBaseUri to set
+     */
+    public void setGrizzlyBaseUri(String grizzlyBaseUri) {
+        this.grizzlyBaseUri = grizzlyBaseUri;
     }
 
 }
