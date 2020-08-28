@@ -1,8 +1,7 @@
 package org.hilel14.archie.enhabsor.core.jobs.tasks;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
+import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
@@ -53,20 +52,42 @@ public class ThumbnailGenerator implements TaskProcessor {
             PDFRenderer renderer = new PDFRenderer(document);
             BufferedImage image = renderer.renderImageWithDPI(0, 72, ImageType.RGB);
             ImageIO.write(image, "png", target.toFile());
-            //ImageIOUtil.writeImage(image, filename, 0, 0);
         }
     }
 
     private void convertImage(ImportFileTicket ticket, Path original) throws Exception {
+        BufferedImage sourceImage = ImageIO.read(original.toFile());
+        Dimension scaledDimension = calculateDimension(sourceImage.getWidth(), sourceImage.getHeight(), 550, 380);
+        Image scaledImage = sourceImage.getScaledInstance(scaledDimension.width, scaledDimension.height, Image.SCALE_SMOOTH);
+        BufferedImage targetImage = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        targetImage.createGraphics().drawImage(scaledImage, 0, 0, null);
         Path target = original.getParent().resolve(ticket.getUuid() + ".png");
-        ImagePlus imagePlus = IJ.openImage(original.toString());
-        ImageProcessor imageProcessor = imagePlus.getProcessor();
-        //imageProcessor.scale(0.5, 0.5);
-        int w = imageProcessor.getWidth(); // max 550
-        int h = imageProcessor.getHeight(); // max 380
-        imageProcessor = imageProcessor.resize(550);
-        imagePlus.setProcessor(imageProcessor);
-        IJ.saveAs(imagePlus, "png", target.toString());
+        ImageIO.write(targetImage, "png", target.toFile());
+
+    }
+
+    private Dimension calculateDimension(int sourceWidth, int sourceHeight, int maxWidth, int maxHeight) {
+        Dimension result = new Dimension(-1, -1);
+        if (sourceWidth <= maxWidth && sourceHeight <= maxHeight) {
+            return result;
+        }
+        if (sourceWidth > maxWidth && sourceHeight <= maxHeight) {
+            result.width = maxWidth;
+            return result;
+        }
+        if (sourceHeight > maxHeight && sourceWidth <= maxWidth) {
+            result.height = maxHeight;
+            return result;
+        }
+        int widthDiff = sourceWidth - maxWidth;
+        int heightDiff = sourceHeight - maxHeight;
+        if (widthDiff > heightDiff) {
+            result.width = maxWidth;
+            return result;
+        } else {
+            result.height = maxHeight;
+            return result;
+        }
     }
 
 }
