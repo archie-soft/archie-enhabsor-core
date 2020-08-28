@@ -36,7 +36,7 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            <!--
+            <!-- run mvn deploy to copy dependencies (excluding test) to target/lib folder -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -44,7 +44,7 @@
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
@@ -55,7 +55,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
     <dependencies>
@@ -173,12 +172,13 @@
             <groupId>org.bytedeco</groupId>
             <artifactId>tesseract-platform</artifactId>
             <version>4.1.1-1.5.3</version>
-        </dependency>     
+        </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>s3</artifactId>
             <version>2.13.32</version>
         </dependency>
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -208,7 +208,7 @@
             <artifactId>zip4j</artifactId>
             <version>2.6.1</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>

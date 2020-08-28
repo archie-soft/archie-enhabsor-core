@@ -10,3 +10,5 @@ for d1 in public private secret; do
         mkdir /var/opt/archie/enhabsor/assetstore/$d1/$d2
     done
 done
+
+chown -R www-data /var/opt/archie/enhabsor

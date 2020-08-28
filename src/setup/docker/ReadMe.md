@@ -36,10 +36,25 @@ Direct access (replace 172.17.0.2 with real container ip)
 * mysql -h 172.17.0.2 -u archie -p enhabsor
 
 ## Deploy java
-* mvn clean install
+
+Setup
+
+* Delete existing files from /opt/hilel14/archie/enhabsor/
+* mvn clean deploy
+* Copy dependencies to the container:
+  sudo docker cp target/lib/ archie.enhabsor.2:/opt/hilel14/archie/enhabsor/
+* Copy grizzly launch script to /opt/hilel14/archie/enhabsor/bin
+
+Update
+
+* mvn clean install -DskipTests=true
 * sudo docker cp target/archie-enhabsor-core-*.jar archie.enhabsor.2:/opt/hilel14/archie/enhabsor/lib
-* optional: copy dependencies to lib folder
-* optional: copy grizzly launch script bin folder
+
+Test
+
+* /opt/hilel14/archie/enhabsor/bin/start-grizzly-server.sh
+* curl http://localhost:8080/archie-enhabsor-ws/about
+* http://localhost/api/about
 
 ## Deploy Angular
 * ng build --prod --base-href / --i18n-file src/locale/messages.he.xlf --i18n-format xlf --i18n-locale he
