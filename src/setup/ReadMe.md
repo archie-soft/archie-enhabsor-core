@@ -1,3 +1,7 @@
+Archie EnHabsor setup
+
+# Docker
+
 ## Requirements
 * Download Apache Solr and save in download folder
 * Download Apache ActiveMQ and save in download folder
@@ -61,3 +65,8 @@ Test
 * sudo docker exec archie.enhabsor.2 rm -rf /var/www/archie/enhabsor
 * sudo docker cp dist/archie-enhabsor-ui archie.enhabsor.2:/var/www/archie/enhabsor
 * sudo docker exec archie.enhabsor.2 chown -R 0.0 /var/www/archie/
+
+# Notes
+
+## Solr schema
+* localTextActionCode: extract, recognize, extracted, recognized
