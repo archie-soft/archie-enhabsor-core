@@ -9,3 +9,5 @@ exec ./config/activemq.sh
 exec ./config/mariadb.sh  
 exec ./config/apache2.sh
 exec ./config/archie-soft.sh
+# additional configuration
+ln --symbolic --force /usr/share/zoneinfo/Asia/Jerusalem  /etc/localtime

@@ -1,4 +1,4 @@
-package org.hilel14.archie.enhabsor.core.ws;
+package org.hilel14.archie.enhabsor.core.cli;
 
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
  * ArchieServer class.
  *
  */
-public class ArchieServer {
+public class GrizzlyServer {
 
-    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ArchieServer.class);
+    public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(GrizzlyServer.class);
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this

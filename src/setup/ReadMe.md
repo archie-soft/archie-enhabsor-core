@@ -47,7 +47,9 @@ Setup
 * mvn clean deploy
 * Copy dependencies to the container:
   sudo docker cp target/lib/ archie.enhabsor.2:/opt/hilel14/archie/enhabsor/
-* Copy grizzly launch script to /opt/hilel14/archie/enhabsor/bin
+* Copy src/main/scripts to /opt/hilel14/archie/enhabsor/bin
+* Create admin user:
+  /opt/hilel14/archie/enhabsor/bin/users-admin.sh
 
 Update
 
@@ -61,7 +63,8 @@ Test
 * http://localhost/api/about
 
 ## Deploy Angular
-* ng build --prod --base-href / --i18n-file src/locale/messages.he.xlf --i18n-format xlf --i18n-locale he
+
+* ng build --prod --base-href /
 * sudo docker exec archie.enhabsor.2 rm -rf /var/www/archie/enhabsor
 * sudo docker cp dist/archie-enhabsor-ui archie.enhabsor.2:/var/www/archie/enhabsor
 * sudo docker exec archie.enhabsor.2 chown -R 0.0 /var/www/archie/
