@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function setup {
-    apt install openjdk-11-jdk git maven
+    apt install openjdk-11-jdk maven
     mkdir -p /opt/hilel14/archie/enhabsor
     mkdir /var/opt/maven
     mvn deploy
