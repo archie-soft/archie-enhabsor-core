@@ -3,8 +3,6 @@
 function setup {
     apt install nodejs npm
     mkdir /var/www/archie/
-    git clone https://github.com/archie-soft/archie-enhabsor-ui.git
-    cd archie-enhabsor-ui
     npm install
     npm install -g @angular/cli
 }
