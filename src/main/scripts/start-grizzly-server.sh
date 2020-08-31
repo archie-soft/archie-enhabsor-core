@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 APP_HOME=`dirname $0`
 APP_HOME=`dirname $APP_HOME`

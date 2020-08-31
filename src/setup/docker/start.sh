@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 service apache2 start
 service mysql start
 runuser -u www-data -- /opt/apache/solr/bin/solr start
