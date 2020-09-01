@@ -2,8 +2,10 @@
 
 function installPackages {
     apt-get update
-    apt-get -y install apache2 mariadb-server openjdk-11-jre  \
-    lsof util-linux vim bash-completion iproute2 curl
+    apt-get -y install \
+        apache2 mariadb-server openjdk-11-jre  \
+        lsof util-linux vim bash-completion iproute2 curl \
+        openjdk-11-jdk maven nodejs npm
 }
 
 function createAssetStore {

@@ -1,7 +1,6 @@
 #!/bin/bash
 
 function setup {
-    apt install nodejs npm
     mkdir /var/www/archie/
     npm install
     npm install -g @angular/cli
