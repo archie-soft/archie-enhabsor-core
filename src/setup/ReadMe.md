@@ -54,11 +54,20 @@ curl http://localhost:8080/archie-enhabsor-ws/about
 
 ## Angular notes
 
+Development
+
 * Make sure port 4200 is published
-* Add the relevant Access-Control headers to Apache2 configuration
+* Add the relevant Access-Control headers to Apache2 configuration?
 * Run inside docker container
 <pre>
 ng serve --host=0.0.0.0
+</pre>
+
+Production
+<pre>
+ng build --prod --base-href /
+rm -rf /var/www/archie/enhabsor
+mv dist/archie-enhabsor-ui /var/www/archie/enhabsor
 </pre>
 
 # General Notes

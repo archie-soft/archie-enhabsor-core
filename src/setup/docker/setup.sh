@@ -8,11 +8,13 @@ function installPackages {
     curl -sL https://deb.nodesource.com/setup_14.x | bash -
     apt-get update
     apt-get install -y nodejs
+    yes | npm install --silent -g @angular/cli
     # add regular user
     adduser --disabled-password --gecos "" archie
 }
 
-function createAssetStore {
+function createFolders {
+    # asset-store
     mkdir -p /var/opt/archie/enhabsor
     for d in assetstore import logs work; do
         mkdir /var/opt/archie/enhabsor/$d
@@ -24,6 +26,11 @@ function createAssetStore {
         done
     done
     chown -R archie /var/opt/archie/enhabsor
+    # java application
+    mkdir -p /opt/hilel14/archie/enhabsor
+    chown -R archie /opt/hilel14/archie/enhabsor
+    mkdir /var/opt/maven
+    chown -R archie /var/opt/maven
 }
 
 function installSolr {
@@ -72,7 +79,7 @@ function otherTasks {
 }
 
 installPackages
-createAssetStore
+createFolders
 installSolr
 installActivemq
 configMariadb
