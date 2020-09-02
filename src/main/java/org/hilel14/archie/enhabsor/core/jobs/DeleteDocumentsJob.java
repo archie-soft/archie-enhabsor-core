@@ -1,9 +1,6 @@
 package org.hilel14.archie.enhabsor.core.jobs;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -11,6 +8,13 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -29,16 +33,22 @@ public class DeleteDocumentsJob {
     final Config config;
 
     public static void main(String[] args) {
-        Path in = Paths.get(args[0]);
+        Options options = createOptions();
+        CommandLineParser parser = new DefaultParser();
         try {
             Config config = new Config();
-            String jobSpec = new String(Files.readAllBytes(in));
+            CommandLine cmd = parser.parse(options, args);
+            String jobSpec = cmd.getOptionValue("job").trim();
             List<String> ids
                     = new ObjectMapper()
                             .readValue(jobSpec, new TypeReference<List<String>>() {
                             });
             DeleteDocumentsJob job = new DeleteDocumentsJob(config);
             job.run(ids);
+        } catch (ParseException ex) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("delete-documents-job", options);
+            System.exit(1);
         } catch (Exception ex) {
             LOGGER.error(null, ex);
         }
@@ -100,6 +110,19 @@ public class DeleteDocumentsJob {
         config.getStorageConnector().delete(attributes.dcAccessRights, "originals", attributes.id.concat(".").concat(attributes.dcFormat));
         config.getStorageConnector().delete(attributes.dcAccessRights, "thumbnails", attributes.id.concat(".png"));
         config.getStorageConnector().delete(attributes.dcAccessRights, "text", attributes.id.concat(".txt"));
+    }
+
+    static Options createOptions() {
+        Options options = new Options();
+        Option option;
+        // job-spec
+        option = new Option("j", "Job spec. Json string representation of ImportFolderJob.");
+        option.setLongOpt("job");
+        option.setArgs(1);
+        option.setRequired(true);
+        options.addOption(option);
+        // return
+        return options;
     }
 
     class FileAttributes {

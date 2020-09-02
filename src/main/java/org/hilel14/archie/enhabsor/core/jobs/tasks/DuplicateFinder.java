@@ -14,16 +14,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author hilel14
  */
-public class DuplicateFinder implements TaskProcessor {
+public class DuplicateFinder {
 
     static final Logger LOGGER = LoggerFactory.getLogger(DuplicateFinder.class);
     final Config config;
+    final ContentExtractor next;
 
-    public DuplicateFinder(Config config) {
+    public DuplicateFinder(Config config) throws Exception {
         this.config = config;
+        this.next = new ContentExtractor(config);
     }
 
-    @Override
     public void process(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Checking if file {} already exist", ticket.getFileName());
         SolrQuery query = new SolrQuery();
@@ -37,7 +38,9 @@ public class DuplicateFinder implements TaskProcessor {
                     ticket.getFileDigest(), ticket.getFileName(), id);
             ticket.setImportStatusCode(ImportFileTicket.INVALID_FILE);
             ticket.setImportStatusText("duplicate of " + id);
+            return;
         }
+        next.process(ticket, path);
     }
 
 }

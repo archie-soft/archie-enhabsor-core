@@ -7,6 +7,6 @@ echo $APP_HOME
 java \
 -cp "$APP_HOME/resources/:$APP_HOME/lib/*" \
 -Duser.timezone="Asia/Jerusalem" \
-org.hilel14.archie.enhabsor.core.cli.GrizzlyServer &
+org.hilel14.archie.enhabsor.core.ws.GrizzlyServer &
 
 echo $! > /var/opt/archie/enhabsor/logs/grizzly.pid

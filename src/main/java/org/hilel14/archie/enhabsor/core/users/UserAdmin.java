@@ -1,4 +1,4 @@
-package org.hilel14.archie.enhabsor.core.cli;
+package org.hilel14.archie.enhabsor.core.users;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -10,16 +10,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.hilel14.archie.enhabsor.core.Config;
-import org.hilel14.archie.enhabsor.core.users.User;
-import org.hilel14.archie.enhabsor.core.users.UserManager;
 
 /**
  *
  * @author hilel14
  */
-public class UserManagerCli {
+public class UserAdmin {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(UserManagerCli.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(UserAdmin.class);
 
     public static void main(String[] args) {
         Options options = createOptions();

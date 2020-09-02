@@ -1,14 +1,28 @@
 package org.hilel14.archie.enhabsor.core.jobs;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.FilenameUtils;
 
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.common.SolrInputDocument;
@@ -25,6 +39,66 @@ public class UpdateDocumentsJob {
     final Config config;
     final DateFormat iso8601TimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     final String[] previewFileNameExtentions = new String[]{"png", "txt"};
+
+    public static void main(String[] args) {
+        CommandLineParser parser = new DefaultParser();
+        Options options = createOptions();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            String input = cmd.getOptionValue("input").trim();
+            Config config = new Config();
+            UpdateDocumentsJob job = new UpdateDocumentsJob(config);
+            Path inFile = Paths.get(input);
+            String format = FilenameUtils.getExtension(inFile.getFileName().toString());
+            switch (format) {
+                case "json":
+                    processJson(job, inFile);
+                    break;
+                case "csv":
+                    processCsv(job, inFile);
+                    break;
+                default:
+                    System.out.println("Invalid input: " + input);
+            }
+        } catch (ParseException ex) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("update-documents", options);
+            System.exit(1);
+        } catch (Exception ex) {
+            LOGGER.error(null, ex);
+        }
+    }
+
+    static void processCsv(UpdateDocumentsJob job, Path inFile)
+            throws Exception {
+        LOGGER.info("Updating Solr index from csv file {}", inFile);
+        try (Reader in = new FileReader(inFile.toFile())) {
+            job.runCsv(in);
+        }
+    }
+
+    static void processJson(UpdateDocumentsJob job, Path inFile)
+            throws Exception {
+        LOGGER.info("Updating Solr index from json file {}", inFile);
+        String attributes = new String(Files.readAllBytes(inFile));
+        List<ArchieItem> docs
+                = new ObjectMapper().readValue(attributes, new TypeReference<List<ArchieItem>>() {
+                });
+        job.run(docs);
+    }
+
+    static Options createOptions() {
+        Options options = new Options();
+        Option option;
+        // input
+        option = new Option("i", "Input. Path to json or csv input file.");
+        option.setLongOpt("input");
+        option.setArgs(1);
+        option.setRequired(true);
+        options.addOption(option);
+        // return
+        return options;
+    }
 
     public UpdateDocumentsJob(Config config) {
         this.config = config;

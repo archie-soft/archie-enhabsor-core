@@ -1,4 +1,4 @@
-package org.hilel14.archie.enhabsor.core.cli;
+package org.hilel14.archie.enhabsor.core.jobs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

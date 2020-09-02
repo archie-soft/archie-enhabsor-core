@@ -1,4 +1,4 @@
-package org.hilel14.archie.enhabsor.core.cli;
+package org.hilel14.archie.enhabsor.core.ws;
 
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;

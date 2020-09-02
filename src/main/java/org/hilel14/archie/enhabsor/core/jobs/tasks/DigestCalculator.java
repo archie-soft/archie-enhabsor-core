@@ -14,22 +14,25 @@ import org.slf4j.LoggerFactory;
  *
  * @author hilel14
  */
-public class DigestCalculator implements TaskProcessor {
+public class DigestCalculator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(DigestCalculator.class);
     final Config config;
+    final DuplicateFinder next;
 
-    public DigestCalculator(Config config) {
+    public DigestCalculator(Config config) throws Exception {
         this.config = config;
+        this.next = new DuplicateFinder(config);
     }
 
-    @Override
     public void process(ImportFileTicket ticket, Path path) throws Exception {
         LOGGER.debug("Calculating digest for file {}", ticket.getFileName());
         try (InputStream in = new FileInputStream(path.toFile())) {
             String digest = DigestUtils.md5Hex(in);
             ticket.setFileDigest(digest);
         }
+        // call next calculator
+        next.process(ticket, path);
     }
 
 }

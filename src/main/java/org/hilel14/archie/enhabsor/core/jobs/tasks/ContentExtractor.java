@@ -27,16 +27,17 @@ import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
  *
  * @author hilel14
  */
-public class ContentExtractor implements TaskProcessor {
+public class ContentExtractor {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ContentExtractor.class);
     final Config config;
+    final DocumentCreator next;
 
-    public ContentExtractor(Config config) throws IOException {
+    public ContentExtractor(Config config) throws Exception {
         this.config = config;
+        this.next = new DocumentCreator(config);
     }
 
-    @Override
     public void process(ImportFileTicket ticket, Path path) throws Exception {
         switch (ticket.getImportFolderForm().getTextAction()) {
             case "recognize":
@@ -48,6 +49,7 @@ public class ContentExtractor implements TaskProcessor {
             default:
                 LOGGER.debug("Skipping text action for file {}", ticket.getFileName());
         }
+        next.process(ticket, path);
     }
 
     private void recognize(ImportFileTicket ticket, Path source) throws IOException {

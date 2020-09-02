@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author hilel
  */
-public class ThumbnailGenerator implements TaskProcessor {
+public class ThumbnailGenerator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ThumbnailGenerator.class);
     final Config config;
@@ -26,7 +26,6 @@ public class ThumbnailGenerator implements TaskProcessor {
         this.config = config;
     }
 
-    @Override
     public void process(ImportFileTicket ticket, Path original) throws Exception {
         LOGGER.debug("Generating preview for file {}", ticket.getFileName());
         switch (ticket.getFormat()) {
