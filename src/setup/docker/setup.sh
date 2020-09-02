@@ -2,10 +2,14 @@
 
 function installPackages {
     apt-get update
-    apt-get -y install \
-        apache2 mariadb-server openjdk-11-jre  \
-        lsof util-linux vim bash-completion iproute2 curl \
-        openjdk-11-jdk maven nodejs npm
+    apt-get -y install apache2 mariadb-server openjdk-11-jre openjdk-11-jdk maven git \
+    lsof util-linux vim bash-completion iproute2 curl xmlstarlet
+    # nodeps
+    curl -sL https://deb.nodesource.com/setup_14.x | bash -
+    apt-get update
+    apt-get install -y nodejs
+    # add regular user
+    adduser --disabled-password --gecos "" archie
 }
 
 function createAssetStore {
@@ -19,16 +23,16 @@ function createAssetStore {
             mkdir /var/opt/archie/enhabsor/assetstore/$d1/$d2
         done
     done
-    chown -R www-data /var/opt/archie/enhabsor
+    chown -R archie /var/opt/archie/enhabsor
 }
 
 function installSolr {
     mkdir -p /opt/apache
     tar xf ./download/solr-7.7.3.tgz
     mv ./solr-7.7.3 /opt/apache/solr
-    chown -R www-data /opt/apache/solr
-    runuser -u www-data -- /opt/apache/solr/bin/solr start
-    runuser -u www-data -- /opt/apache/solr/bin/solr create -c enhabsor
+    chown -R archie /opt/apache/solr
+    runuser -u archie -- /opt/apache/solr/bin/solr start
+    runuser -u archie -- /opt/apache/solr/bin/solr create -c enhabsor
     curl http://localhost:8983/solr/enhabsor/config -d '{"set-user-property": {"update.autoCreateFields":"false"}}'
     curl http://localhost:8983/solr/enhabsor/config -H 'Content-type:application/json' -d @./archie.solr.config.json
     curl http://localhost:8983/solr/enhabsor/schema -H 'Content-type:application/json' -d @./archie.solr.schema.json
@@ -39,7 +43,8 @@ function installActivemq {
     mkdir -p /opt/apache
     tar xf ./download/activemq-5.16.0-bin.tar.gz
     mv ./apache-activemq-5.16.0 /opt/apache/activemq
-    chown -R www-data /opt/apache/activemq
+    xmlstarlet edit --inplace -N my=http://www.springframework.org/schema/beans --update "/my:beans/my:bean[@id='jettyPort']/my:property[@name='host']/@value" --value "0.0.0.0" /opt/apache/activemq/conf/jetty.xml
+    chown -R archie /opt/apache/activemq
 }
 
 function configMariadb {
@@ -53,7 +58,7 @@ function configApache2 {
     # Apache http server configuration
     mkdir -p /var/www/archie/enhabsor
     mv ./archie.virtual-host.conf /etc/apache2/sites-available/
-    chown -R www-data /var/opt/archie/enhabsor
+    chown -R archie /var/opt/archie/enhabsor
     a2enmod proxy
     a2enmod proxy_http
     a2enmod headers

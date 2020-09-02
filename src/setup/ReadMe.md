@@ -10,7 +10,7 @@ Archie EnHabsor setup
 sudo docker build --rm --tag local/archie.enhabsor:2 .
 
 ## Run
-sudo docker run -idt --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/root/archie-soft --name=archie.enhabsor.2 -p 80:80 -p 8983:8983 -p 8161:8161 -p 4200:4200 local/archie.enhabsor:2
+sudo docker run -idt --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/archie/archie-soft --name=archie.enhabsor.2 -p 80:80 -p 8983:8983 -p 8161:8161 -p 4200:4200 local/archie.enhabsor:2
 
 -i, --interactive 
 -d, --detach 
@@ -22,7 +22,6 @@ sudo docker exec -it archie.enhabsor.2 /bin/bash
 
 ## Optional configuration
 * Edit /etc/mysql/mariadb.conf.d/50-server.cnf : set bind-address to 0.0.0.0
-* Edit /opt/apache/activemq/conf/jetty.xml > bean id="jettyPort" >  property name="host" : set value to 0.0.0.0
 
 ## Test
 
@@ -40,37 +39,29 @@ Direct access (replace 172.17.0.2 with real container ip)
 * http://172.17.0.2:8161/admin/
 * mysql -h 172.17.0.2 -u archie -p enhabsor
 
-## Deploy java
+## Java notes
 
-Setup
-
-* Delete existing files from /opt/hilel14/archie/enhabsor/
-* mvn clean deploy
-* Copy dependencies to the container:
-  sudo docker cp target/lib/ archie.enhabsor.2:/opt/hilel14/archie/enhabsor/
-* Copy src/main/scripts to /opt/hilel14/archie/enhabsor/bin
-* Create admin user:
-  /opt/hilel14/archie/enhabsor/bin/users-admin.sh
-
-Update
-
-* mvn clean install -DskipTests=true
-* sudo docker cp target/archie-enhabsor-core-*.jar archie.enhabsor.2:/opt/hilel14/archie/enhabsor/lib
+Create admin user:
+<pre>
+</pre>
+/opt/hilel14/archie/enhabsor/bin/users-admin.sh
 
 Test
+<pre>
+/opt/hilel14/archie/enhabsor/bin/start-grizzly-server.sh
+curl http://localhost:8080/archie-enhabsor-ws/about
+</pre>
 
-* /opt/hilel14/archie/enhabsor/bin/start-grizzly-server.sh
-* curl http://localhost:8080/archie-enhabsor-ws/about
-* http://localhost/api/about
+## Angular notes
 
-## Deploy Angular
+* Make sure port 4200 is published
+* Add the relevant Access-Control headers to Apache2 configuration
+* Run inside docker container
+<pre>
+ng serve --host=0.0.0.0
+</pre>
 
-* ng build --prod --base-href /
-* sudo docker exec archie.enhabsor.2 rm -rf /var/www/archie/enhabsor
-* sudo docker cp dist/archie-enhabsor-ui archie.enhabsor.2:/var/www/archie/enhabsor
-* sudo docker exec archie.enhabsor.2 chown -R 0.0 /var/www/archie/
-
-# Notes
+# General Notes
 
 ## Solr schema
 * localTextActionCode: extract, recognize, extracted, recognized
