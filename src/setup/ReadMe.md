@@ -10,7 +10,7 @@ Archie EnHabsor setup
 sudo docker build --rm --tag local/archie.enhabsor:2 .
 
 ## Run
-sudo docker run -idt --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/archie/archie-soft --name=archie.enhabsor.2 -p 80:80 -p 8983:8983 -p 8161:8161 -p 4200:4200 local/archie.enhabsor:2
+sudo docker run -idt --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/home/archie/archie-soft --name=archie.enhabsor.2 -p 80:80 -p 8983:8983 -p 8161:8161 -p 4200:4200 local/archie.enhabsor:2
 
 -i, --interactive 
 -d, --detach 
