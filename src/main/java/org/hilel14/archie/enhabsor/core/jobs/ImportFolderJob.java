@@ -3,6 +3,8 @@ package org.hilel14.archie.enhabsor.core.jobs;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -18,6 +20,12 @@ import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.tasks.FileValidator;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.ContentExtractor;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.DigestCalculator;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.DocumentCreator;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.DuplicateFinder;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.FileInstaller;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.TaskProcessor;
 import org.hilel14.archie.enhabsor.core.jobs.tools.DatabaseTool;
 
 /**
@@ -29,6 +37,7 @@ public class ImportFolderJob {
     static final Logger LOGGER = LoggerFactory.getLogger(ImportFolderJob.class);
     Config config;
     DatabaseTool databaseTool;
+    List<TaskProcessor> processors = new ArrayList<>();
 
     public static void main(String[] args) {
         Options options = createOptions();
@@ -36,7 +45,9 @@ public class ImportFolderJob {
         try {
             Config config = new Config();
             CommandLine cmd = parser.parse(options, args);
-            String jobSpec = cmd.getOptionValue("job").trim();
+            String inFile = cmd.getOptionValue("in-file").trim();
+            Path inPath = Paths.get(inFile);
+            String jobSpec = new String(Files.readAllBytes(inPath));
             ImportFolderForm form = ImportFolderForm.unmarshal(jobSpec);
             ImportFolderJob importFolderJob = new ImportFolderJob(config);
             importFolderJob.run(form);
@@ -52,6 +63,16 @@ public class ImportFolderJob {
     public ImportFolderJob(Config config) throws Exception {
         this.config = config;
         databaseTool = new DatabaseTool(config);
+        initProcessors();
+    }
+
+    private void initProcessors() throws IOException {
+        processors.add(new FileValidator(config));
+        processors.add(new DigestCalculator(config));
+        processors.add(new DuplicateFinder(config));
+        processors.add(new ContentExtractor(config));
+        processors.add(new DocumentCreator(config));
+        processors.add(new FileInstaller(config));
     }
 
     public void run(ImportFolderForm form) throws Exception {
@@ -76,8 +97,11 @@ public class ImportFolderJob {
     }
 
     private void importFile(ImportFileTicket ticket, Path path) throws Exception {
-        FileValidator validator = new FileValidator(config);
-        validator.process(ticket, path);
+        for (TaskProcessor processor : processors) {
+            if (ticket.getImportStatusCode() == ImportFileTicket.IMPORT_IN_PROGRESS) {
+                processor.process(ticket, path);
+            }
+        }
         ticket.finalizeStatus();
         cleanup(ticket);
     }
@@ -95,8 +119,8 @@ public class ImportFolderJob {
         Options options = new Options();
         Option option;
         // job-spec
-        option = new Option("j", "Job spec. Json string representation of ImportFolderJob.");
-        option.setLongOpt("job");
+        option = new Option("i", "Job spec. Json file representation of ImportFolderJob.");
+        option.setLongOpt("in-file");
         option.setArgs(1);
         option.setRequired(true);
         options.addOption(option);

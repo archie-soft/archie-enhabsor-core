@@ -16,19 +16,18 @@ import org.slf4j.LoggerFactory;
  *
  * @author hilel14
  */
-public class FileValidator {
+public class FileValidator implements TaskProcessor {
 
     static final Logger LOGGER = LoggerFactory.getLogger(FileValidator.class);
     final Pattern startsWithWordCharacter = Pattern.compile("[a-zA-Z_0-9_א-ת].+");
     final Config config;
-    final DigestCalculator next;
 
-    public FileValidator(Config config) throws Exception {
+    public FileValidator(Config config) {
         this.config = config;
-        this.next = new DigestCalculator(config);
     }
 
-    public void process(ImportFileTicket ticket, Path path) throws Exception {
+    @Override
+    public void process(ImportFileTicket ticket, Path path) {
         LOGGER.debug("Validating file {}", ticket.getFileName());
         if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
             ticket.setImportStatusCode(ImportFileTicket.INVALID_FILE);
@@ -54,9 +53,6 @@ public class FileValidator {
         if (!config.getValidFileFormats().contains(extension.toLowerCase())) {
             ticket.setImportStatusCode(ImportFileTicket.INVALID_FILE);
             ticket.setImportStatusText("Unknown file name extention: " + extension);
-            return;
         }
-        // call next processor
-        next.process(ticket, path);
     }
 }

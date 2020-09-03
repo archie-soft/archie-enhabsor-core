@@ -5,19 +5,22 @@ import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.TestimSetup;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
-import static org.hilel14.archie.enhabsor.core.jobs.tasks.ThumbnailGeneratorTest.LOGGER;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hilel
  */
 public class ContentExtractorTest {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(ContentExtractorTest.class);
 
     public ContentExtractorTest() {
     }

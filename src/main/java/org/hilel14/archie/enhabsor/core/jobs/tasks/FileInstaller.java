@@ -12,7 +12,7 @@ import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
  *
  * @author hilel14
  */
-public class FileInstaller {
+public class FileInstaller implements TaskProcessor {
 
     static final Logger LOGGER = LoggerFactory.getLogger(FileInstaller.class);
     final Config config;
@@ -21,6 +21,7 @@ public class FileInstaller {
         this.config = config;
     }
 
+    @Override
     public void process(ImportFileTicket ticket, Path original) throws Exception {
         String repository = ticket.getImportFolderForm().getItemAttributes().get("dcAccessRights").toString();
         // original
