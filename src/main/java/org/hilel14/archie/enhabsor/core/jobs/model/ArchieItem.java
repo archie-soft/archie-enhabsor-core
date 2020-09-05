@@ -3,12 +3,16 @@ package org.hilel14.archie.enhabsor.core.jobs.model;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author hilel
  */
 public class ArchieItem extends HashMap<String, Object> {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(ArchieItem.class);
 
     private String id;
 
@@ -30,15 +34,6 @@ public class ArchieItem extends HashMap<String, Object> {
             }
         }
         return item;
-    }
-
-    public SolrInputDocument toSolrCreate() {
-        SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", id);
-        keySet().forEach(key -> {
-            doc.addField(key, get(key));
-        });
-        return doc;
     }
 
     public SolrInputDocument toSolrUpdate() {

@@ -129,7 +129,12 @@
         "stored": true
     },
     "add-field": {
-        "name": "timestamp",
+        "name": "fileDigest",
+        "type": "string",
+        "multiValued": false
+    },
+    "add-field": {
+        "name": "importTime",
         "type": "pdate",
         "indexed": true,
         "stored": true,

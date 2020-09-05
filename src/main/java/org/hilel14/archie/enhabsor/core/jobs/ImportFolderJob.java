@@ -1,6 +1,7 @@
 package org.hilel14.archie.enhabsor.core.jobs;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,6 +27,7 @@ import org.hilel14.archie.enhabsor.core.jobs.tasks.DocumentCreator;
 import org.hilel14.archie.enhabsor.core.jobs.tasks.DuplicateFinder;
 import org.hilel14.archie.enhabsor.core.jobs.tasks.FileInstaller;
 import org.hilel14.archie.enhabsor.core.jobs.tasks.TaskProcessor;
+import org.hilel14.archie.enhabsor.core.jobs.tasks.ThumbnailGenerator;
 import org.hilel14.archie.enhabsor.core.jobs.tools.DatabaseTool;
 
 /**
@@ -43,12 +45,12 @@ public class ImportFolderJob {
         Options options = createOptions();
         CommandLineParser parser = new DefaultParser();
         try {
-            Config config = new Config();
             CommandLine cmd = parser.parse(options, args);
             String inFile = cmd.getOptionValue("in-file").trim();
             Path inPath = Paths.get(inFile);
-            String jobSpec = new String(Files.readAllBytes(inPath));
+            String jobSpec = new String(Files.readAllBytes(inPath),Charset.forName("utf-8"));
             ImportFolderForm form = ImportFolderForm.unmarshal(jobSpec);
+            Config config = new Config();
             ImportFolderJob importFolderJob = new ImportFolderJob(config);
             importFolderJob.run(form);
         } catch (ParseException ex) {
@@ -72,6 +74,7 @@ public class ImportFolderJob {
         processors.add(new DuplicateFinder(config));
         processors.add(new ContentExtractor(config));
         processors.add(new DocumentCreator(config));
+        processors.add(new ThumbnailGenerator(config));
         processors.add(new FileInstaller(config));
     }
 

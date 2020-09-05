@@ -19,6 +19,7 @@ function createFolders {
     for d in assetstore import logs work; do
         mkdir /var/opt/archie/enhabsor/$d
     done
+    mkdir /var/opt/archie/enhabsor/work/import
     for d1 in public private secret; do
         mkdir /var/opt/archie/enhabsor/assetstore/$d1
         for d2 in originals thumbnails text; do

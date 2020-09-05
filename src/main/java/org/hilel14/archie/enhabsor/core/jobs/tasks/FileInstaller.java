@@ -25,15 +25,18 @@ public class FileInstaller implements TaskProcessor {
     public void process(ImportFileTicket ticket, Path original) throws Exception {
         String repository = ticket.getImportFolderForm().getItemAttributes().get("dcAccessRights").toString();
         // original
+        LOGGER.debug("Uploading file {} to asset-store as {}", ticket.getFileName(),ticket.getAssetName());
         config.getStorageConnector().upload(original, repository, "originals");
         // thumbnail
         Path thumbnail = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".png");
         if (Files.exists(thumbnail)) {
+            LOGGER.debug("Uploading thumbnail for file {} to asset-store as {}", ticket.getFileName(), thumbnail.getFileName());
             config.getStorageConnector().upload(thumbnail, repository, "thumbnails");
         }
         // text
         Path text = config.getWorkFolder().resolve("import").resolve(ticket.getUuid() + ".txt");
         if (Files.exists(text)) {
+            LOGGER.debug("Uploading text content for file {} to asset-store", ticket.getFileName());
             config.getStorageConnector().upload(text, repository, "text");
         }
         // cleanup
