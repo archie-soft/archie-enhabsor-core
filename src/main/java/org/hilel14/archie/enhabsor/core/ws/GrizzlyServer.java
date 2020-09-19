@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class GrizzlyServer {
 
     public static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(GrizzlyServer.class);
+    // Logger l = Logger.getLogger("org.glassfish.grizzly.http.server.HttpHandler");
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this
@@ -28,14 +29,12 @@ public class GrizzlyServer {
      */
     public static void main(String[] args) {
 
-        ServiceLocator serviceLocator
-                = ServiceLocatorUtilities.createAndPopulateServiceLocator();
+        ServiceLocator serviceLocator = ServiceLocatorUtilities.createAndPopulateServiceLocator();
 
         // create a resource config that scans for JAX-RS resources and providers
         // in the dedicated package
-        final ResourceConfig resourceConfig
-                = new ResourceConfig().packages(true,
-                        "org.hilel14.archie.enhabsor.core.ws.resources");
+        final ResourceConfig resourceConfig = new ResourceConfig().packages(true,
+                "org.hilel14.archie.enhabsor.core.ws.resources");
 
         // config
         Map<String, Object> properties = new HashMap<>();
@@ -52,10 +51,9 @@ public class GrizzlyServer {
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
-        GrizzlyHttpServerFactory.createHttpServer(
-                URI.create(config.getGrizzlyBaseUri()),
-                resourceConfig,
-                serviceLocator);
+        URI baseUri = URI.create(config.getGrizzlyBaseUri());
+        LOGGER.info("Starting Grizzly server and exposing the Jersey application at {}", baseUri.toString());
+        GrizzlyHttpServerFactory.createHttpServer(baseUri, resourceConfig, serviceLocator);
     }
 
 }

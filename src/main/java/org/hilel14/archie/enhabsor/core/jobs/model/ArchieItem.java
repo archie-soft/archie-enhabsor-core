@@ -21,13 +21,13 @@ public class ArchieItem extends HashMap<String, Object> {
         for (String key : map.keySet()) {
             switch (key) {
                 case "id":
-                    item.setId(map.get(key));
+                    item.setId(map.get("id"));
                     break;
                 case "dcCreator":
-                    item.put(key, map.get(key).split(","));
+                    item.put("dcCreator", map.get("dcCreator").split(","));
                     break;
                 case "localStoragePermanent":
-                    item.put(key, Boolean.parseBoolean(map.get(key)));
+                    item.put("localStoragePermanent", Boolean.parseBoolean(map.get("localStoragePermanent")));
                     break;
                 default:
                     item.put(key, map.get(key));
@@ -38,11 +38,13 @@ public class ArchieItem extends HashMap<String, Object> {
 
     public SolrInputDocument toSolrUpdate() {
         SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("id", id);
+        doc.addField("id", get("id"));
         keySet().forEach(key -> {
-            Map<String, Object> val = new HashMap<>();
-            val.put("set", get(key));
-            doc.addField(key, val);
+            if (!key.equals("id")) {
+                Map<String, Object> val = new HashMap<>();
+                val.put("set", get(key));
+                doc.addField(key, val);
+            }
         });
         return doc;
     }

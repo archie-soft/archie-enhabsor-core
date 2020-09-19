@@ -6,8 +6,6 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,6 +17,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.math3.analysis.function.Exp;
 import org.hilel14.archie.enhabsor.core.Config;
 
 import org.hilel14.archie.enhabsor.core.jobs.DeleteDocumentsJob;
@@ -45,15 +45,12 @@ public class Docs {
 
     @GET
     @Path("folders")
-    @RolesAllowed("manager")
     @Produces(MediaType.APPLICATION_JSON)
     public List<String> getFolders() throws Exception {
         return config.getStorageConnector().listFolders("import", "");
     }
 
     @POST
-    @PermitAll
-    @RolesAllowed("manager")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     @Path("folder")
@@ -64,20 +61,23 @@ public class Docs {
     }
 
     @PUT
-    @RolesAllowed("manager")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateDocs(List<ArchieItem> items) throws Exception {
+    public void updateDocs(List<ArchieItem> items) {
         LOGGER.debug("Updating {} documents", items.size());
-        if (items.size() == 1) {
-            UpdateDocumentsJob job = new UpdateDocumentsJob(config);
-            job.run(items);
-        } else {
-            jmsProducer.produceJsonMessage(items, "update-documents");
+        try {
+            if (items.size() == 1) {
+                UpdateDocumentsJob job = new UpdateDocumentsJob(config);
+                job.run(items);
+                LOGGER.info("Update operation completed successfully");
+            } else {
+                jmsProducer.produceJsonMessage(items, "update-documents");
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Update operation failed!", ex);
         }
     }
 
     @DELETE
-    @RolesAllowed("manager")
     @Consumes(MediaType.APPLICATION_JSON)
     public void deleteDocs(List<String> docs) throws Exception {
         LOGGER.debug("Deleting {} documents", docs.size());

@@ -25,6 +25,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FilenameUtils;
 
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.model.ArchieItem;
@@ -38,7 +39,7 @@ public class UpdateDocumentsJob {
     static final Logger LOGGER = LoggerFactory.getLogger(UpdateDocumentsJob.class);
     final Config config;
     final DateFormat iso8601TimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    final String[] previewFileNameExtentions = new String[]{"png", "txt"};
+    final String[] previewFileNameExtentions = new String[] { "png", "txt" };
 
     public static void main(String[] args) {
         CommandLineParser parser = new DefaultParser();
@@ -69,21 +70,18 @@ public class UpdateDocumentsJob {
         }
     }
 
-    static void processCsv(UpdateDocumentsJob job, Path inFile)
-            throws Exception {
+    static void processCsv(UpdateDocumentsJob job, Path inFile) throws Exception {
         LOGGER.info("Updating Solr index from csv file {}", inFile);
         try (Reader in = new FileReader(inFile.toFile())) {
             job.runCsv(in);
         }
     }
 
-    static void processJson(UpdateDocumentsJob job, Path inFile)
-            throws Exception {
+    static void processJson(UpdateDocumentsJob job, Path inFile) throws Exception {
         LOGGER.info("Updating Solr index from json file {}", inFile);
         String attributes = new String(Files.readAllBytes(inFile));
-        List<ArchieItem> docs
-                = new ObjectMapper().readValue(attributes, new TypeReference<List<ArchieItem>>() {
-                });
+        List<ArchieItem> docs = new ObjectMapper().readValue(attributes, new TypeReference<List<ArchieItem>>() {
+        });
         job.run(docs);
     }
 
@@ -105,7 +103,9 @@ public class UpdateDocumentsJob {
     }
 
     public void run(List<ArchieItem> items) throws Exception {
+        LOGGER.debug("Updating items {}", items);
         for (ArchieItem item : items) {
+            LOGGER.debug("Updating item {}", item.get("id"));
             update(item, config.getSolrClient());
         }
         config.getSolrClient().commit();
@@ -125,15 +125,17 @@ public class UpdateDocumentsJob {
         LOGGER.info("The operation completed successfully");
     }
 
-    public void update(ArchieItem item, SolrClient solrClient)
-            throws Exception {
-        // Create Solr Document
+    public void update(ArchieItem item, SolrClient solrClient) throws Exception {
+        LOGGER.debug("Converting item {} to Solr document", item.get("id"));
         SolrInputDocument doc = item.toSolrUpdate();
         if (item.containsKey("dcFormat")) {
+            LOGGER.debug("Checking asset-store files related to item {}", item.get("id"));
             moveFiles(item);
         }
         // add to solr
+        LOGGER.debug("Adding doc {} to Solr index", doc.get("id"));
         solrClient.add(doc);
+        LOGGER.debug("Update of item {} completed successfully", item.get("id"));
     }
 
     private void moveFiles(ArchieItem item) throws Exception {
@@ -145,11 +147,13 @@ public class UpdateDocumentsJob {
         if (sourceRepository.equalsIgnoreCase(targetRepository)) {
             return;
         }
-        LOGGER.debug("Moving originals/{} from {} to {}", item.getOriginalFileName(), sourceRepository, targetRepository);
+        LOGGER.debug("Moving originals/{} from {} to {}", item.getOriginalFileName(), sourceRepository,
+                targetRepository);
         config.getStorageConnector().move(sourceRepository, targetRepository, "originals", item.getOriginalFileName());
         // thumbnails
         if (config.getStorageConnector().exist(sourceRepository, "thumbnails", item.getThumbnailFileName())) {
-            config.getStorageConnector().move(sourceRepository, targetRepository, "thumbnails", item.getThumbnailFileName());
+            config.getStorageConnector().move(sourceRepository, targetRepository, "thumbnails",
+                    item.getThumbnailFileName());
         }
         // text
         if (config.getStorageConnector().exist(sourceRepository, "text", item.getTextFileName())) {
