@@ -1,10 +1,7 @@
 package org.hilel14.archie.enhabsor.core.ws.resources;
 
-import org.hilel14.archie.enhabsor.core.ws.JmsProducer;
 import java.util.ArrayList;
 import java.util.List;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -18,13 +15,14 @@ import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.math3.analysis.function.Exp;
 import org.hilel14.archie.enhabsor.core.Config;
-
 import org.hilel14.archie.enhabsor.core.jobs.DeleteDocumentsJob;
 import org.hilel14.archie.enhabsor.core.jobs.UpdateDocumentsJob;
 import org.hilel14.archie.enhabsor.core.jobs.model.ArchieItem;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
+import org.hilel14.archie.enhabsor.core.ws.JmsProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Documents and files related operations

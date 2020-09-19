@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
 import org.hilel14.archie.enhabsor.core.Config;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFileTicket;
+import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
 
 /**
  *
@@ -39,41 +40,80 @@ public class DocumentCreator implements TaskProcessor {
         if (ticket.getContent() != null) {
             doc.addField("content", ticket.getContent());
         }
-        Map<String, Object> item = ticket.getImportFolderForm().getItemAttributes();
-        item.keySet().forEach(key -> {
-            doc.addField(key, item.get(key)
-            );
-        });
-        addFileNames(ticket, doc);
+        ImportFolderForm form = ticket.getImportFolderForm();
+        if (form.getIsadFonds() != null) {
+            doc.addField("isadFonds", form.getIsadFonds());
+        }
+        if (form.getIsadSubFonds() != null) {
+            doc.addField("isadSubFonds", form.getIsadSubFonds());
+        }
+        if (form.getIsadSeries() != null) {
+            doc.addField("isadSeries", form.getIsadSeries());
+        }
+        if (form.getIsadFile() != null) {
+            doc.addField("isadFile", form.getIsadFile());
+        }
+        doc.addField("dcAccessRights", form.getDcAccessRights());
+        if (form.getDcTitle() != null) {
+            doc.addField("dcTitle", form.getDcTitle());
+        }
+        if (form.getDcCreator() != null) {
+            doc.addField("dcCreator", form.getDcCreator());
+        }
+        if (form.getDcDateStart() != null) {
+            doc.addField("dcDateStart", form.getDcDateStart());
+        }
+        if (form.getDcDateEnd() != null) {
+            doc.addField("dcDateEnd", form.getDcDateEnd());
+        }
+        if (form.getDcDescription() != null) {
+            doc.addField("dcDescription", form.getDcDescription());
+        }
+        doc.addField("dcType", form.getDcType());
+        if (form.getDcSource() != null) {
+            doc.addField("dcSource", form.getDcSource());
+        }
+        if (form.getDcIdentifier() != null) {
+            doc.addField("dcIdentifier", form.getDcIdentifier());
+        }
+        doc.addField("localStoragePermanent", form.isLocalStoragePermanent());
+        if (form.getLocalStorageCabinet() != null) {
+            doc.addField("localStorageCabinet", form.getLocalStorageCabinet());
+        }
+        if (form.getLocalStorageShelf() != null) {
+            doc.addField("localStorageShelf", form.getLocalStorageShelf());
+        }
+        if (form.getLocalStorageContainer() != null) {
+            doc.addField("localStorageContainer", form.getLocalStorageContainer());
+        }
+        addFileNames(ticket.getBaseName(), form, doc);
         config.getSolrClient().add(doc);
         config.getSolrClient().commit();
     }
 
-    private void addFileNames(ImportFileTicket ticket, SolrInputDocument doc) {
-        String addFileNamesTo = ticket.getImportFolderForm().getAddFileNamesTo();
-        if (addFileNamesTo == null) {
+    private void addFileNames(String baseFileName, ImportFolderForm form, SolrInputDocument doc) {
+        if (form.getAddFileNamesTo() == null) {
             return;
         }
-        Map<String, Object> item = ticket.getImportFolderForm().getItemAttributes();
-        switch (addFileNamesTo) {
+        switch (form.getAddFileNamesTo()) {
             case "dcTitle":
-                if (item.get("dcTitle") == null) {
-                    doc.addField("dcTitle", ticket.getBaseName());
+                if (form.getDcTitle() == null) {
+                    doc.addField("dcTitle", baseFileName);
                 } else {
-                    String dcTitle = item.get("dcTitle").toString().trim() + " " + ticket.getBaseName();
+                    String dcTitle = form.getDcTitle().trim() + " " + baseFileName;
                     doc.getField("dcTitle").setValue(dcTitle);
                 }
                 break;
             case "dcDescription":
-                if (item.get("dcDescription") == null) {
-                    doc.addField("dcDescription", ticket.getBaseName());
+                if (form.getDcDescription() == null) {
+                    doc.addField("dcDescription", baseFileName);
                 } else {
-                    String dcDescription = item.get("dcDescription").toString().trim() + " " + ticket.getBaseName();
+                    String dcDescription = form.getDcDescription().trim() + " " + baseFileName;
                     doc.getField("dcDescription").setValue(dcDescription);
                 }
                 break;
             default:
-                throw new IllegalArgumentException("Unknown addFileNamesTo field: " + addFileNamesTo);
+                throw new IllegalArgumentException("Unknown addFileNamesTo field: " + form.getAddFileNamesTo());
         }
     }
 

@@ -41,11 +41,6 @@ Direct access (replace 172.17.0.2 with real container ip)
 
 ## Java notes
 
-Create admin user:
-<pre>
-</pre>
-/opt/hilel14/archie/enhabsor/bin/users-admin.sh
-
 Test
 <pre>
 /opt/hilel14/archie/enhabsor/bin/start-grizzly-server.sh

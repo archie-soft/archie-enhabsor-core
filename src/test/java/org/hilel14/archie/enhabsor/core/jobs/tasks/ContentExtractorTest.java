@@ -49,7 +49,7 @@ public class ContentExtractorTest {
     @Test
     public void testProcess() throws Exception {
         LOGGER.info("Testing process method of class ContentExtractor");
-        // prepare test env
+        // prepare test env        
         Config config = TestimSetup.initTestEvn();
         ContentExtractor instance = new ContentExtractor(config);
         ImportFolderForm form = TestimSetup.getImportFolderForm();

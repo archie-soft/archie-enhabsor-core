@@ -23,7 +23,7 @@ public class FileInstaller implements TaskProcessor {
 
     @Override
     public void process(ImportFileTicket ticket, Path original) throws Exception {
-        String repository = ticket.getImportFolderForm().getItemAttributes().get("dcAccessRights").toString();
+        String repository = ticket.getImportFolderForm().getDcAccessRights();
         // original
         LOGGER.debug("Uploading file {} to asset-store as {}", ticket.getFileName(),ticket.getAssetName());
         config.getStorageConnector().upload(original, repository, "originals");

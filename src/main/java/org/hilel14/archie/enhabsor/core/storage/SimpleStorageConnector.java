@@ -52,6 +52,7 @@ public class SimpleStorageConnector implements StorageConnector {
         DirectoryStream<Path> stream = Files.newDirectoryStream(dir);
         for (Path path : stream) {
             if (Files.isRegularFile(path)) {
+                LOGGER.debug("Adding file {}", path.getFileName());
                 items.add(path.getFileName().toString());
             }
         }
@@ -69,7 +70,7 @@ public class SimpleStorageConnector implements StorageConnector {
     public Path download(String repository, String container, String file) throws IOException {
         Path source = repositories.get(repository).resolve(container).resolve(file);
         Path target = workFolder.resolve(repository).resolve(file);
-        //Files.createDirectories(target.getParent());
+        // Files.createDirectories(target.getParent());
         Files.move(source, target);
         return target;
     }

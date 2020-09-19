@@ -40,6 +40,8 @@ public class Config {
     private SolrClient solrClient;
     private final Set<String> repositories = new HashSet<>();
     private Key key;
+    private String tesseractTrainDataPath;
+    private String tesseractLang;
 
     public Config(Properties properties) throws Exception {
         initConfig(properties);
@@ -66,6 +68,8 @@ public class Config {
         repositories.add("private");
         repositories.add("secret");
         key = MacProvider.generateKey();
+        setTesseractTrainDataPath(properties.getProperty("tesseract.train.data.path"));
+        setTesseractLang(properties.getProperty("tesseract.lang"));
     }
 
     private Properties loadProperties() throws IOException {
@@ -210,6 +214,34 @@ public class Config {
      */
     public void setGrizzlyBaseUri(String grizzlyBaseUri) {
         this.grizzlyBaseUri = grizzlyBaseUri;
+    }
+
+    /**
+     * @return the tesseractTrainDataPath
+     */
+    public String getTesseractTrainDataPath() {
+        return tesseractTrainDataPath;
+    }
+
+    /**
+     * @param tesseractTrainDataPath the tesseractTrainDataPath to set
+     */
+    public void setTesseractTrainDataPath(String tesseractTrainDataPath) {
+        this.tesseractTrainDataPath = tesseractTrainDataPath;
+    }
+
+    /**
+     * @return the tesseractLang
+     */
+    public String getTesseractLang() {
+        return tesseractLang;
+    }
+
+    /**
+     * @param tesseractLang the tesseractLang to set
+     */
+    public void setTesseractLang(String tesseractLang) {
+        this.tesseractLang = tesseractLang;
     }
 
 }

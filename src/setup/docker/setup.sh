@@ -3,7 +3,7 @@
 function installPackages {
     apt-get update
     apt-get -y install apache2 mariadb-server openjdk-11-jre openjdk-11-jdk maven git \
-    lsof util-linux vim bash-completion iproute2 curl xmlstarlet
+    lsof util-linux vim bash-completion iproute2 curl xmlstarlet locales
     # nodeps
     curl -sL https://deb.nodesource.com/setup_14.x | bash -
     apt-get update
@@ -76,7 +76,17 @@ function configApache2 {
 }
 
 function otherTasks {
+    # date and time
     ln --symbolic --force /usr/share/zoneinfo/Asia/Jerusalem  /etc/localtime
+    # character encoding
+    echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf
+    locale-gen en_US.UTF-8
+    # also add to Dockerfile ?
+        # ENV LANG en_US.UTF-8
+        # ENV LANGUAGE en_US:en
+        # ENV LC_ALL en_US.UTF-8
 }
 
 installPackages

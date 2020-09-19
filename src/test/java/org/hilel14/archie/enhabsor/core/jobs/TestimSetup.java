@@ -68,6 +68,7 @@ public class TestimSetup {
         properties.put("public.assets", base.resolve("assetstore").resolve("public").toString());
         properties.put("private.assets", base.resolve("assetstore").resolve("private").toString());
         properties.put("secret.assets", base.resolve("assetstore").resolve("secret").toString());
+        properties.put("tesseract.train.data.path", "src/test/resources/tessdata/best");
         return properties;
     }
 

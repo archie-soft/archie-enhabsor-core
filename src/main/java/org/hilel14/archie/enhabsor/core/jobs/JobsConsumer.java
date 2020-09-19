@@ -1,10 +1,6 @@
 package org.hilel14.archie.enhabsor.core.jobs;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -12,13 +8,15 @@ import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.hilel14.archie.enhabsor.core.Config;
-import org.hilel14.archie.enhabsor.core.jobs.DeleteDocumentsJob;
-import org.hilel14.archie.enhabsor.core.jobs.ImportFolderJob;
-import org.hilel14.archie.enhabsor.core.jobs.UpdateDocumentsJob;
 import org.hilel14.archie.enhabsor.core.jobs.model.ArchieItem;
 import org.hilel14.archie.enhabsor.core.jobs.model.ImportFolderForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *

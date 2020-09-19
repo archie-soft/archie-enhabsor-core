@@ -84,10 +84,8 @@ public class ContentExtractor implements TaskProcessor {
 
     private void ocrImage(ImportFileTicket ticket, Path source) throws IOException {
         TessBaseAPI api = new TessBaseAPI();
-        String trainDatePath = "src/main/resources/tessdata/best";
-        String lang = "heb";
-        if (api.Init(trainDatePath, lang) != 0) {
-            throw new IOException("Unable to init tesseract api with train data files from " + trainDatePath);
+        if (api.Init(config.getTesseractTrainDataPath(), config.getTesseractLang()) != 0) {
+            throw new IOException("Unable to init tesseract api with train data files from " + config.getTesseractTrainDataPath());
         }
         // Open input image with leptonica library
         PIX image = pixRead(source.toString());
