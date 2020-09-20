@@ -34,28 +34,41 @@ public class Docs {
 
     static final Logger LOGGER = LoggerFactory.getLogger(Docs.class);
     final Config config;
-    final JmsProducer jmsProducer;
+    JmsProducer jmsProducer = null;
 
-    public Docs(@Context Configuration configuration) throws Exception {
+    public Docs(@Context Configuration configuration) {
         this.config = (Config) configuration.getProperty("archie.config");
-        this.jmsProducer = new JmsProducer(config.getJmsFactory(), config.getJmsQueueName());
+        try {
+            this.jmsProducer = new JmsProducer(config.getJmsFactory(), config.getJmsQueueName());
+        } catch (Exception ex) {
+            LOGGER.error("Docs class initialization failed!", ex);
+        }
     }
 
     @GET
     @Path("folders")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getFolders() throws Exception {
-        return config.getStorageConnector().listFolders("import", "");
+    public List<String> getFolders() {
+        List<String> folders = null;
+        try {
+            folders = config.getStorageConnector().listFolders("import", "");
+        } catch (Exception ex) {
+            LOGGER.error("List folders operation failed!", ex);
+        }
+        return folders;
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     @Path("folder")
-    public int importFolder(ImportFolderForm form) throws Exception {
+    public void importFolder(ImportFolderForm form) {
         LOGGER.debug("Importing files from {}", form.getFolderName());
-        jmsProducer.produceJsonMessage(form, "import-folder");
-        return 0;
+        try {
+            jmsProducer.produceJsonMessage(form, "import-folder");
+        } catch (Exception ex) {
+            LOGGER.error("Import folder operation failed!", ex);
+        }
     }
 
     @PUT
@@ -77,19 +90,26 @@ public class Docs {
 
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
-    public void deleteDocs(List<String> docs) throws Exception {
+    public void deleteDocs(List<String> docs) {
         LOGGER.debug("Deleting {} documents", docs.size());
-        jmsProducer.produceJsonMessage(docs, "delete-documents");
+        try {
+            jmsProducer.produceJsonMessage(docs, "delete-documents");
+        } catch (Exception ex) {
+            LOGGER.error("Delete docs operation failed!", ex);
+        }
     }
 
     @DELETE
     @Path("delete/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void deleteDoc(@PathParam("id") String id) throws Exception {
+    public void deleteDoc(@PathParam("id") String id) {
         LOGGER.debug("Deleting document {}", id);
         List<String> docs = new ArrayList<>();
         docs.add(id);
-        new DeleteDocumentsJob(config).run(docs);
+        try {
+            new DeleteDocumentsJob(config).run(docs);
+        } catch (Exception ex) {
+            LOGGER.error("Delete doc operation failed!", ex);
+        }
     }
-
 }

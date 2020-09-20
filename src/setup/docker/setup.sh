@@ -65,8 +65,8 @@ function configMariadb {
 function configApache2 {
     # Apache http server configuration
     mkdir -p /var/www/archie/enhabsor
+    chown -R archie /var/www/archie/enhabsor
     mv ./archie.virtual-host.conf /etc/apache2/sites-available/
-    chown -R archie /var/opt/archie/enhabsor
     a2enmod proxy
     a2enmod proxy_http
     a2enmod headers
