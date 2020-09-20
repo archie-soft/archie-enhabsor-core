@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# cd to root of maven project
+
 function setup {
     mvn deploy
     mv target/lib/ /opt/hilel14/archie/enhabsor/
@@ -18,5 +20,16 @@ function update {
     /opt/hilel14/archie/enhabsor/bin/start-jobs-consumer.sh
 }
 
-#setup
-update
+case "$1" in
+    setup)
+        echo setup
+    ;;
+    
+    update)
+        echo update
+    ;;
+    
+    *)
+        echo $"Usage: $0 {setup|update}"
+        exit 1
+esac

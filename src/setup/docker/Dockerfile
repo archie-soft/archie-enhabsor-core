@@ -3,4 +3,4 @@ WORKDIR /root/
 ADD . /root
 RUN ./setup.sh
 CMD ["/root/start.sh"]
-EXPOSE 80 3306 8983 8161
+EXPOSE 80
