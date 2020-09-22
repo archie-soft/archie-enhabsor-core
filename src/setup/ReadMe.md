@@ -20,7 +20,7 @@ docker run --interactive --detach --tty --mount type=bind,source=/home/hilel/Pro
 Production
 
 <pre>
-docker run -idt --mount type=bind,source=/var/opt/archie/enhabsor/,target=/var/opt/archie/enhabsor/ --name=archie.enhabsor.2 --publish 80:80 local/archie.enhabsor:2
+docker run -idt --mount type=bind,source=/var/opt/archie/import/,target=/var/opt/archie/enhabsor/import --name=archie.enhabsor.2 --publish 80:80 local/archie.enhabsor:2
 </pre>
 
 ## Connect
