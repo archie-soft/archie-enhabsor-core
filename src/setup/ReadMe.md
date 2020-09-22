@@ -7,18 +7,24 @@ Archie EnHabsor setup
 * Download Apache ActiveMQ and save in download folder
 
 ## Build
-sudo docker build --rm --tag local/archie.enhabsor:2 .
+docker build --rm --tag local/archie.enhabsor:2 .
 
 ## Run
-sudo docker run -idt --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/home/archie/archie-soft --name=archie.enhabsor.2 -p 80:80 -p 8983:8983 -p 8161:8161 -p 4200:4200 local/archie.enhabsor:2
 
--i, --interactive 
--d, --detach 
--t, --tty 
--p, --publish
+Development
+
+<pre>
+docker run --interactive --detach --tty --mount type=bind,source=/home/hilel/Projects/archie-soft,target=/home/archie/archie-soft --name=archie.enhabsor.2 --publish 80:80 --publish 8983:8983 --publish 8161:8161 --publish 4200:4200 local/archie.enhabsor:2
+</pre>
+
+Production
+
+<pre>
+docker run -idt --mount type=bind,source=/var/opt/archie/enhabsor/,target=/var/opt/archie/enhabsor/ --name=archie.enhabsor.2 --publish 80:80 local/archie.enhabsor:2
+</pre>
 
 ## Connect
-sudo docker exec -it archie.enhabsor.2 /bin/bash
+docker exec -it archie.enhabsor.2 /bin/bash
 
 ## Optional configuration
 * Edit /etc/mysql/mariadb.conf.d/50-server.cnf : set bind-address to 0.0.0.0
