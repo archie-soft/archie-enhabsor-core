@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # cd to root of angular project
+# run npm install
 
 ng build --prod --base-href /
 rm -rf /var/www/archie/enhabsor/*

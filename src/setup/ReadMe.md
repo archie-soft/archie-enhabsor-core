@@ -21,6 +21,7 @@ Production
 
 <pre>
 docker run -idt --mount type=bind,source=/var/opt/archie/import/,target=/var/opt/archie/enhabsor/import --name=archie.enhabsor.2 --publish 80:80 local/archie.enhabsor:2
+docker update --restart always archie.enhabsor.2
 </pre>
 
 ## Connect
