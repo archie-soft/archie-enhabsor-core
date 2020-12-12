@@ -4,7 +4,7 @@ function installPackages {
     apt-get update
     apt-get -y install apache2 mariadb-server openjdk-11-jre openjdk-11-jdk maven git \
     lsof util-linux vim bash-completion iproute2 curl xmlstarlet locales
-    # nodeps
+    # nodejs
     curl -sL https://deb.nodesource.com/setup_14.x | bash -
     apt-get update
     apt-get install -y nodejs
